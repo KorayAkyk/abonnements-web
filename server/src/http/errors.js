@@ -14,7 +14,6 @@ export function notFoundHandler(_req, _res, next) {
 
 export function createErrorHandler(logger) {
   // Express reconnait un gestionnaire d'erreurs a ses quatre parametres.
-  // eslint-disable-next-line no-unused-vars
   return function errorHandler(error, _req, res, _next) {
     if (error instanceof HttpError) {
       res.status(error.status).json({

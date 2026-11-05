@@ -29,6 +29,8 @@ export default [
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
       'react/prop-types': 'off',
+      // Les apostrophes du francais sont sans danger dans du JSX.
+      'react/no-unescaped-entities': 'off',
     },
   },
   {
