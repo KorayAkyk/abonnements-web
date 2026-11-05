@@ -1,0 +1,76 @@
+Error:
+  type: object
+  required: [error]
+  properties:
+    error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string, example: donnees_invalides }
+        message: { type: string }
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field: { type: string }
+              message: { type: string }
+User:
+  type: object
+  properties:
+    id: { type: string, format: uuid }
+    email: { type: string, format: email }
+    fullName: { type: string }
+    role: { type: string, enum: [member, admin] }
+Plan:
+  type: object
+  properties:
+    code: { type: string, enum: [essentiel, confort, integral] }
+    name: { type: string }
+    description: { type: string }
+    priceCents: { type: integer, example: 4500 }
+    currency: { type: string, example: eur }
+Status:
+  type: string
+  enum: [pending, active, past_due, canceled, expired]
+Subscription:
+  type: object
+  properties:
+    id: { type: string, format: uuid }
+    status: { $ref: '#/Status' }
+    provider: { type: string, enum: [simulator, stripe] }
+    plan: { $ref: '#/Plan' }
+    currentPeriodEnd: { type: string, format: date-time, nullable: true }
+    cancelAtPeriodEnd: { type: boolean }
+    canceledAt: { type: string, format: date-time, nullable: true }
+    createdAt: { type: string, format: date-time }
+Payment:
+  type: object
+  properties:
+    id: { type: string, format: uuid }
+    amountCents: { type: integer }
+    currency: { type: string }
+    status: { type: string, enum: [paid, failed] }
+    occurredAt: { type: string, format: date-time }
+    planName: { type: string }
+    email: { type: string, description: Présent dans les listes d'administration. }
+AdminSubscription:
+  type: object
+  properties:
+    id: { type: string, format: uuid }
+    status: { $ref: '#/Status' }
+    currentPeriodEnd: { type: string, format: date-time, nullable: true }
+    cancelAtPeriodEnd: { type: boolean }
+    createdAt: { type: string, format: date-time }
+    planName: { type: string }
+    email: { type: string }
+    fullName: { type: string }
+Stats:
+  type: object
+  properties:
+    memberCount: { type: integer }
+    activeCount: { type: integer }
+    pastDueCount: { type: integer }
+    canceledCount: { type: integer }
+    monthlyRevenueCents: { type: integer }
+    totalPaidCents: { type: integer }

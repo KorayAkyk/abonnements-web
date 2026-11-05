@@ -1,0 +1,146 @@
+current:
+  get:
+    tags: [Abonnements]
+    summary: L'abonnement du compte, vivant ou dernier résilié. null si aucun.
+    security:
+      - sessionCookie: []
+    responses:
+      '200':
+        description: L'abonnement.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscription:
+                  allOf:
+                    - $ref: 'schemas.yaml#/Subscription'
+                  nullable: true
+      '401': { $ref: 'openapi.yaml#/components/responses/Unauthorized' }
+checkout:
+  post:
+    tags: [Abonnements]
+    summary: Démarre une souscription et renvoie l'adresse de la page de paiement.
+    description: >
+      L'abonnement reste en attente jusqu'à la réception de l'événement signé. Une nouvelle demande
+      remplace une session encore en attente.
+    security:
+      - sessionCookie: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [planCode]
+            properties:
+              planCode: { type: string, example: confort }
+    responses:
+      '201':
+        description: Session de paiement créée.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscriptionId: { type: string, format: uuid }
+                checkoutUrl: { type: string }
+      '400': { $ref: 'openapi.yaml#/components/responses/Invalid' }
+      '401': { $ref: 'openapi.yaml#/components/responses/Unauthorized' }
+      '404': { $ref: 'openapi.yaml#/components/responses/NotFound' }
+      '409': { $ref: 'openapi.yaml#/components/responses/Conflict' }
+      '502':
+        description: Le service de paiement ne répond pas.
+cancel:
+  post:
+    tags: [Abonnements]
+    summary: Résilie à la fin de la période payée. Refaire la demande ne change rien.
+    security:
+      - sessionCookie: []
+    responses:
+      '200':
+        description: Résiliation programmée.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscription: { $ref: 'schemas.yaml#/Subscription' }
+      '401': { $ref: 'openapi.yaml#/components/responses/Unauthorized' }
+      '404': { $ref: 'openapi.yaml#/components/responses/NotFound' }
+      '409': { $ref: 'openapi.yaml#/components/responses/Conflict' }
+      '502':
+        description: Le service de paiement ne répond pas.
+payments:
+  get:
+    tags: [Abonnements]
+    summary: Historique des paiements du compte, du plus récent au plus ancien.
+    security:
+      - sessionCookie: []
+    parameters:
+      - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+      - { name: offset, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+    responses:
+      '200':
+        description: Une page de l'historique.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payments:
+                  type: array
+                  items: { $ref: 'schemas.yaml#/Payment' }
+                total: { type: integer }
+      '400': { $ref: 'openapi.yaml#/components/responses/Invalid' }
+      '401': { $ref: 'openapi.yaml#/components/responses/Unauthorized' }
+simulatedCheckout:
+  get:
+    tags: [Simulateur]
+    summary: Lit une session de paiement simulée du compte connecté.
+    security:
+      - sessionCookie: []
+    parameters:
+      - { name: checkoutId, in: path, required: true, schema: { type: string } }
+    responses:
+      '200':
+        description: La session.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { $ref: 'schemas.yaml#/Status' }
+                plan: { $ref: 'schemas.yaml#/Plan' }
+      '401': { $ref: 'openapi.yaml#/components/responses/Unauthorized' }
+      '404': { $ref: 'openapi.yaml#/components/responses/NotFound' }
+simulatedPay:
+  post:
+    tags: [Simulateur]
+    summary: Simule l'issue du paiement. Les événements passent par le service de webhook.
+    security:
+      - sessionCookie: []
+    parameters:
+      - { name: checkoutId, in: path, required: true, schema: { type: string } }
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [outcome]
+            properties:
+              outcome: { type: string, enum: [success, declined, abandon] }
+    responses:
+      '200':
+        description: Issue appliquée.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscription: { $ref: 'schemas.yaml#/Subscription' }
+      '400': { $ref: 'openapi.yaml#/components/responses/Invalid' }
+      '401': { $ref: 'openapi.yaml#/components/responses/Unauthorized' }
+      '404': { $ref: 'openapi.yaml#/components/responses/NotFound' }
+      '409': { $ref: 'openapi.yaml#/components/responses/Conflict' }

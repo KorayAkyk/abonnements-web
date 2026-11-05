@@ -1,0 +1,141 @@
+health:
+  get:
+    tags: [Formules]
+    summary: Sonde de santé. Interroge la base et indique le prestataire actif.
+    responses:
+      '200':
+        description: Application disponible.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { type: string, example: ok }
+                paymentProvider: { type: string, enum: [simulator, stripe] }
+plans:
+  get:
+    tags: [Formules]
+    summary: Liste les trois formules. Public.
+    responses:
+      '200':
+        description: Les formules, dans l'ordre d'affichage.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                plans:
+                  type: array
+                  items: { $ref: 'schemas.yaml#/Plan' }
+webhook:
+  post:
+    tags: [Webhook]
+    summary: Reçoit un événement de paiement signé.
+    description: >
+      Authentifié par la signature HMAC de l'en-tête Stripe-Signature, calculée sur le corps brut.
+      Un événement déjà reçu répond 200 avec duplicate à true et n'a aucun effet.
+    parameters:
+      - name: Stripe-Signature
+        in: header
+        required: true
+        schema: { type: string }
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: { type: object, description: Événement au format Stripe. }
+    responses:
+      '200':
+        description: Événement accepté.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                received: { type: boolean }
+                duplicate: { type: boolean }
+      '400':
+        description: Signature absente, invalide ou trop ancienne.
+        content:
+          application/json:
+            schema: { $ref: 'schemas.yaml#/Error' }
+      '500':
+        description: Traitement annulé en entier. Le renvoi de l'événement sera traité.
+register:
+  post:
+    tags: [Comptes]
+    summary: Crée un compte membre et ouvre une session.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [email, fullName, password]
+            properties:
+              email: { type: string, format: email }
+              fullName: { type: string, minLength: 2, maxLength: 100 }
+              password: { type: string, minLength: 10, maxLength: 200 }
+    responses:
+      '201':
+        description: Compte créé. Le cookie de session est posé.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user: { $ref: 'schemas.yaml#/User' }
+      '400': { $ref: 'openapi.yaml#/components/responses/Invalid' }
+      '409': { $ref: 'openapi.yaml#/components/responses/Conflict' }
+      '429':
+        description: Trop d'inscriptions depuis cette adresse IP.
+login:
+  post:
+    tags: [Comptes]
+    summary: Ouvre une session.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [email, password]
+            properties:
+              email: { type: string, format: email }
+              password: { type: string }
+    responses:
+      '200':
+        description: Connecté. Le cookie de session est posé.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user: { $ref: 'schemas.yaml#/User' }
+      '400': { $ref: 'openapi.yaml#/components/responses/Invalid' }
+      '401': { $ref: 'openapi.yaml#/components/responses/Unauthorized' }
+      '429':
+        description: Trop d'échecs pour ce compte depuis cette adresse IP.
+logout:
+  post:
+    tags: [Comptes]
+    summary: Ferme la session côté serveur.
+    responses:
+      '204':
+        description: Session fermée.
+me:
+  get:
+    tags: [Comptes]
+    summary: Renvoie le compte connecté.
+    security:
+      - sessionCookie: []
+    responses:
+      '200':
+        description: Le compte.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user: { $ref: 'schemas.yaml#/User' }
+      '401': { $ref: 'openapi.yaml#/components/responses/Unauthorized' }

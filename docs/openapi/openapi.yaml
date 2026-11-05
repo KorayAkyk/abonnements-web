@@ -1,0 +1,86 @@
+openapi: 3.0.3
+info:
+  title: Abonnements Web
+  version: 1.0.0
+  description: >
+    API REST de gestion d'abonnements pour une salle de sport fictive. Authentification par cookie
+    de session HttpOnly. Toute erreur a la forme { "error": { "code", "message", "details" } }.
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: Comptes
+  - name: Formules
+  - name: Abonnements
+  - name: Webhook
+  - name: Administration
+  - name: Simulateur
+    description: Disponible uniquement avec PAYMENT_PROVIDER=simulator.
+paths:
+  /api/health:
+    $ref: 'paths-public.yaml#/health'
+  /api/plans:
+    $ref: 'paths-public.yaml#/plans'
+  /api/webhooks/payments:
+    $ref: 'paths-public.yaml#/webhook'
+  /api/auth/register:
+    $ref: 'paths-public.yaml#/register'
+  /api/auth/login:
+    $ref: 'paths-public.yaml#/login'
+  /api/auth/logout:
+    $ref: 'paths-public.yaml#/logout'
+  /api/auth/me:
+    $ref: 'paths-public.yaml#/me'
+  /api/subscriptions/current:
+    $ref: 'paths-member.yaml#/current'
+  /api/subscriptions/checkout:
+    $ref: 'paths-member.yaml#/checkout'
+  /api/subscriptions/current/cancel:
+    $ref: 'paths-member.yaml#/cancel'
+  /api/subscriptions/payments:
+    $ref: 'paths-member.yaml#/payments'
+  /api/simulator/checkouts/{checkoutId}:
+    $ref: 'paths-member.yaml#/simulatedCheckout'
+  /api/simulator/checkouts/{checkoutId}/pay:
+    $ref: 'paths-member.yaml#/simulatedPay'
+  /api/admin/stats:
+    $ref: 'paths-admin.yaml#/stats'
+  /api/admin/subscriptions:
+    $ref: 'paths-admin.yaml#/subscriptions'
+  /api/admin/subscriptions/{id}/cancel:
+    $ref: 'paths-admin.yaml#/cancel'
+  /api/admin/payments:
+    $ref: 'paths-admin.yaml#/payments'
+  /api/simulator/subscriptions/{id}/{action}:
+    $ref: 'paths-admin.yaml#/simulatedEvent'
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: abonnements_session
+  responses:
+    Invalid:
+      description: Données invalides.
+      content:
+        application/json:
+          schema: { $ref: 'schemas.yaml#/Error' }
+    Unauthorized:
+      description: Connexion requise.
+      content:
+        application/json:
+          schema: { $ref: 'schemas.yaml#/Error' }
+    Forbidden:
+      description: Rôle insuffisant, ou origine de la requête refusée.
+      content:
+        application/json:
+          schema: { $ref: 'schemas.yaml#/Error' }
+    NotFound:
+      description: Ressource introuvable.
+      content:
+        application/json:
+          schema: { $ref: 'schemas.yaml#/Error' }
+    Conflict:
+      description: Action impossible dans l'état actuel.
+      content:
+        application/json:
+          schema: { $ref: 'schemas.yaml#/Error' }

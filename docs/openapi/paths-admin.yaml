@@ -1,0 +1,114 @@
+stats:
+  get:
+    tags: [Administration]
+    summary: Indicateurs de la salle.
+    security:
+      - sessionCookie: []
+    responses:
+      '200':
+        description: Les indicateurs.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                stats: { $ref: 'schemas.yaml#/Stats' }
+      '401': { $ref: 'openapi.yaml#/components/responses/Unauthorized' }
+      '403': { $ref: 'openapi.yaml#/components/responses/Forbidden' }
+subscriptions:
+  get:
+    tags: [Administration]
+    summary: Liste les abonnements, filtrés par statut si demandé.
+    security:
+      - sessionCookie: []
+    parameters:
+      - { name: status, in: query, schema: { $ref: 'schemas.yaml#/Status' } }
+      - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+      - { name: offset, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+    responses:
+      '200':
+        description: Une page d'abonnements.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscriptions:
+                  type: array
+                  items: { $ref: 'schemas.yaml#/AdminSubscription' }
+                total: { type: integer }
+      '400': { $ref: 'openapi.yaml#/components/responses/Invalid' }
+      '401': { $ref: 'openapi.yaml#/components/responses/Unauthorized' }
+      '403': { $ref: 'openapi.yaml#/components/responses/Forbidden' }
+cancel:
+  post:
+    tags: [Administration]
+    summary: Résilie l'abonnement d'un membre à la fin de la période payée.
+    security:
+      - sessionCookie: []
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    responses:
+      '200':
+        description: Résiliation programmée.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscription: { $ref: 'schemas.yaml#/Subscription' }
+      '400': { $ref: 'openapi.yaml#/components/responses/Invalid' }
+      '401': { $ref: 'openapi.yaml#/components/responses/Unauthorized' }
+      '403': { $ref: 'openapi.yaml#/components/responses/Forbidden' }
+      '404': { $ref: 'openapi.yaml#/components/responses/NotFound' }
+      '409': { $ref: 'openapi.yaml#/components/responses/Conflict' }
+payments:
+  get:
+    tags: [Administration]
+    summary: Liste tous les paiements, du plus récent au plus ancien.
+    security:
+      - sessionCookie: []
+    parameters:
+      - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+      - { name: offset, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+    responses:
+      '200':
+        description: Une page de paiements.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payments:
+                  type: array
+                  items: { $ref: 'schemas.yaml#/Payment' }
+                total: { type: integer }
+      '400': { $ref: 'openapi.yaml#/components/responses/Invalid' }
+      '401': { $ref: 'openapi.yaml#/components/responses/Unauthorized' }
+      '403': { $ref: 'openapi.yaml#/components/responses/Forbidden' }
+simulatedEvent:
+  post:
+    tags: [Simulateur]
+    summary: Simule un événement de la vie d'un abonnement (renouvellement, refus, fin de période).
+    security:
+      - sessionCookie: []
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      - name: action
+        in: path
+        required: true
+        schema: { type: string, enum: [renew, payment-failure, end-period] }
+    responses:
+      '200':
+        description: Événement appliqué.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscription: { $ref: 'schemas.yaml#/Subscription' }
+      '400': { $ref: 'openapi.yaml#/components/responses/Invalid' }
+      '401': { $ref: 'openapi.yaml#/components/responses/Unauthorized' }
+      '403': { $ref: 'openapi.yaml#/components/responses/Forbidden' }
+      '404': { $ref: 'openapi.yaml#/components/responses/NotFound' }
+      '409': { $ref: 'openapi.yaml#/components/responses/Conflict' }
