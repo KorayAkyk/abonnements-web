@@ -21,11 +21,11 @@ const ADMIN_EVENTS = {
   'end-period': { build: simulated.subscriptionDeleted, allowed: ['active', 'past_due'] },
 };
 
-/** Routes du simulateur : montees uniquement quand PAYMENT_PROVIDER vaut simulator. */
+/** Routes du simulateur : montées uniquement quand PAYMENT_PROVIDER vaut simulator. */
 export function simulatorRoutes({ pool, webhookService, webhookSecret }) {
   const router = Router();
 
-  // Passe par le service de webhook : signature verifiee et traitement unique, comme avec Stripe.
+  // Passe par le service de webhook : signature vérifiée et traitement unique, comme avec Stripe.
   async function deliver(eventObject) {
     const { rawBody, signature } = simulated.signEvent(eventObject, webhookSecret);
     await webhookService.receive(rawBody, signature);
@@ -33,7 +33,7 @@ export function simulatorRoutes({ pool, webhookService, webhookSecret }) {
 
   async function findOwnCheckout(req) {
     const subscription = await repository.findByCheckoutId(pool, req.params.checkoutId);
-    // Meme reponse pour une session absente ou celle d'un autre : pas d'indice sur son existence.
+    // Même réponse pour une session absente ou celle d'un autre : pas d'indice sur son existence.
     if (!subscription || subscription.userId !== req.user.id) {
       throw new HttpError(404, 'session_introuvable', 'Cette session de paiement est introuvable.');
     }
@@ -49,9 +49,9 @@ export function simulatorRoutes({ pool, webhookService, webhookSecret }) {
     const { outcome } = parse(payBodySchema, req.body);
     const subscription = await findOwnCheckout(req);
     if (subscription.status !== 'pending') {
-      throw new HttpError(409, 'session_terminee', 'Cette session de paiement est terminee.');
+      throw new HttpError(409, 'session_terminee', 'Cette session de paiement est terminée.');
     }
-    // checkoutCompleted fixe l'identifiant de l'abonnement simule : on le relit pour la facture.
+    // checkoutCompleted fixe l'identifiant de l'abonnement simulé : on le relit pour la facture.
     for (const build of CHECKOUT_EVENTS[outcome]) {
       await deliver(build(await repository.findById(pool, subscription.id)));
     }
@@ -70,7 +70,7 @@ export function simulatorRoutes({ pool, webhookService, webhookSecret }) {
       throw new HttpError(404, 'abonnement_introuvable', 'Cet abonnement est introuvable.');
     }
     if (!action.allowed.includes(subscription.status)) {
-      throw new HttpError(409, 'action_impossible', 'Cette action est impossible dans cet etat.');
+      throw new HttpError(409, 'action_impossible', 'Cette action est impossible dans cet état.');
     }
     await deliver(action.build(subscription));
     const updated = await repository.findById(pool, id);

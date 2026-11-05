@@ -41,7 +41,7 @@ export default function LoginPage() {
         </button>
       </form>
       <p>
-        Pas encore de compte ? <Link to="/inscription">Creer un compte</Link>
+        Pas encore de compte ? <Link to="/inscription">Créer un compte</Link>
       </p>
     </section>
   );

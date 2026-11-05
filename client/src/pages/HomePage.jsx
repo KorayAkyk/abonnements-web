@@ -14,7 +14,7 @@ export default function HomePage() {
     <>
       <section className="intro">
         <h1>Trois formules, sans engagement</h1>
-        <p>Choisissez votre formule, payez en ligne et resiliez quand vous voulez depuis votre espace.</p>
+        <p>Choisissez votre formule, payez en ligne et résiliez quand vous voulez depuis votre espace.</p>
       </section>
       <ErrorMessage error={error} />
       {data && (

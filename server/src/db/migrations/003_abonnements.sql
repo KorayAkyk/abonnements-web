@@ -15,7 +15,7 @@ CREATE TABLE subscriptions (
   updated_at               timestamptz NOT NULL DEFAULT now()
 );
 
--- Regle metier portee par la base : un compte a au plus un abonnement vivant.
+-- Règle métier portée par la base : un compte a au plus un abonnement vivant.
 CREATE UNIQUE INDEX subscriptions_one_live_per_user
   ON subscriptions (user_id)
   WHERE status IN ('pending', 'active', 'past_due');

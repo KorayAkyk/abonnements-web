@@ -73,7 +73,7 @@ export function requireAdmin(req, _res, next) {
     return;
   }
   if (req.user.role !== 'admin') {
-    next(new HttpError(403, 'acces_refuse', "Cette action est reservee a l'administration."));
+    next(new HttpError(403, 'acces_refuse', "Cette action est réservée à l'administration."));
     return;
   }
   next();

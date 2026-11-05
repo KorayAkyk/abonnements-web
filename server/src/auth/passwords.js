@@ -11,7 +11,7 @@ async function derive(password, salt, { N, r, p }) {
   return scryptAsync(password.normalize('NFKC'), salt, KEY_LENGTH, { N, r, p, maxmem: MAX_MEMORY });
 }
 
-/** Format stocke : scrypt$N$r$p$sel$empreinte. Les parametres voyagent avec l'empreinte. */
+/** Format stocké : scrypt$N$r$p$sel$empreinte. Les paramètres voyagent avec l'empreinte. */
 export async function hashPassword(password) {
   const salt = randomBytes(16);
   const hash = await derive(password, salt, COST);
@@ -31,8 +31,8 @@ export async function verifyPassword(password, stored) {
 let decoyHash;
 
 /**
- * Compare le mot de passe a une empreinte factice quand le compte n'existe pas :
- * le temps de reponse ne revele donc pas si une adresse est inscrite.
+ * Compare le mot de passe à une empreinte factice quand le compte n'existe pas :
+ * le temps de réponse ne révèle donc pas si une adresse est inscrite.
  */
 export async function burnPasswordCheck(password) {
   decoyHash ??= await hashPassword(randomBytes(16).toString('hex'));

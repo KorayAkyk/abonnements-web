@@ -1,4 +1,4 @@
-// Developpement : base, API avec rechargement automatique et interface Vite.
+// Développement : base, API avec rechargement automatique et interface Vite.
 import { execSync, spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';

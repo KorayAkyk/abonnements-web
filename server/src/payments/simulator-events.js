@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import Stripe from 'stripe';
 
-/** Fabrique des evenements de meme forme que ceux de Stripe, signes selon le meme schema. */
+/** Fabrique des événements de même forme que ceux de Stripe, signés selon le même schéma. */
 
 const DAY_SECONDS = 24 * 60 * 60;
 
@@ -74,7 +74,7 @@ export function subscriptionDeleted(subscription) {
   });
 }
 
-/** Signe un evenement comme le ferait Stripe. Renvoie le corps brut et l'en-tete de signature. */
+/** Signe un événement comme le ferait Stripe. Renvoie le corps brut et l'en-tête de signature. */
 export function signEvent(eventObject, secret) {
   const payload = JSON.stringify(eventObject);
   const signature = Stripe.webhooks.generateTestHeaderString({ payload, secret });

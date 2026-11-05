@@ -32,13 +32,13 @@ function serveClient(app) {
     return;
   }
   app.use(express.static(CLIENT_DIST));
-  // Application a page unique : le routeur React lit l'adresse une fois index.html charge.
+  // Application à page unique : le routeur React lit l'adresse une fois index.html chargé.
   app.get(/^\/(?!api(\/|$)).*/, (_req, res) => {
     res.sendFile(path.join(CLIENT_DIST, 'index.html'));
   });
 }
 
-/** Construit l'application sans ecouter de port : les tests l'utilisent directement. */
+/** Construit l'application sans écouter de port : les tests l'utilisent directement. */
 export function createApp({ pool, config, logger = console, stripeClient }) {
   const app = express();
   const isSimulator = config.paymentProvider === 'simulator';
@@ -66,7 +66,7 @@ export function createApp({ pool, config, logger = console, stripeClient }) {
     res.json({ status: 'ok', paymentProvider: provider.name });
   });
 
-  // Avant express.json() et sans controle d'origine : c'est la signature qui l'authentifie.
+  // Avant express.json() et sans contrôle d'origine : c'est la signature qui l'authentifie.
   app.use('/api/webhooks', webhookRoutes({ webhookService }));
 
   const api = express.Router();

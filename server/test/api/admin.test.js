@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createAdmin, createTestContext, registerMember, subscribeAndPay } from '../helpers.js';
 
-describe('espace d administration', () => {
+describe("espace d'administration", () => {
   let ctx;
   let admin;
   let activeMember;
@@ -57,13 +57,13 @@ describe('espace d administration', () => {
     expect(response.body.total).toBe(3);
   });
 
-  it('liste les paiements, reussis et refuses', async () => {
+  it('liste les paiements, réussis et refusés', async () => {
     const response = await admin.agent.get('/api/admin/payments').expect(200);
     expect(response.body.total).toBe(4);
     expect(response.body.payments.filter((payment) => payment.status === 'failed')).toHaveLength(1);
   });
 
-  it('peut resilier l abonnement d un membre', async () => {
+  it("peut résilier l'abonnement d'un membre", async () => {
     const member = await registerMember(ctx.app);
     const { subscriptionId } = await subscribeAndPay(member.agent);
     const response = await admin.agent.post(`/api/admin/subscriptions/${subscriptionId}/cancel`).expect(200);
@@ -72,7 +72,7 @@ describe('espace d administration', () => {
     expect(current.body.subscription.cancelAtPeriodEnd).toBe(true);
   });
 
-  it('valide l identifiant et signale un abonnement absent', async () => {
+  it("valide l'identifiant et signale un abonnement absent", async () => {
     await admin.agent.post('/api/admin/subscriptions/pas-un-uuid/cancel').expect(400);
     await admin.agent.post('/api/admin/subscriptions/00000000-0000-4000-8000-000000000000/cancel').expect(404);
   });

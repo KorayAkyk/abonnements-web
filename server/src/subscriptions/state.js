@@ -1,13 +1,13 @@
 /**
- * Cycle de vie d'un abonnement, sans base de donnees ni reseau.
+ * Cycle de vie d'un abonnement, sans base de données ni réseau.
  *
- *   pending --paiement recu--> active --paiement refuse--> past_due
+ *   pending --paiement recu--> active --paiement refusé--> past_due
  *      |                          ^                           |
- *      | session expiree          +------paiement recu--------+
+ *      | session expirée          +------paiement recu--------+
  *      v
  *   expired                    active/past_due/pending --fin chez le prestataire--> canceled
  *
- * canceled et expired sont definitifs : un evenement en retard ne ranime jamais un abonnement.
+ * canceled et expired sont définitifs : un événement en retard ne ranime jamais un abonnement.
  */
 export const TRIGGERS = Object.freeze({
   PAYMENT_SUCCEEDED: 'payment_succeeded',
@@ -34,16 +34,16 @@ const TRANSITIONS = {
   expired: {},
 };
 
-/** Renvoie le nouvel etat, ou l'etat courant si l'evenement ne change rien. */
+/** Renvoie le nouvel état, ou l'état courant si l'événement ne change rien. */
 export function nextStatus(current, trigger) {
   const transitions = TRANSITIONS[current];
   if (!transitions) {
-    throw new Error(`Etat d'abonnement inconnu : ${current}`);
+    throw new Error(`État d'abonnement inconnu : ${current}`);
   }
   return transitions[trigger] ?? current;
 }
 
-/** Un abonnement resiliable : il donne acces a la salle et n'est pas deja termine. */
+/** Un abonnement résiliable : il donne accès à la salle et n'est pas déjà terminé. */
 export function isCancelable(status) {
   return status === 'active' || status === 'past_due';
 }

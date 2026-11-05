@@ -31,18 +31,18 @@ function SubscriptionSummary({ subscription, onCancel, isBusy }) {
         <p>Le paiement n'a pas abouti. Choisissez une formule ci-dessous pour recommencer.</p>
       )}
       {subscription.status === 'past_due' && (
-        <p role="alert">Le dernier paiement a ete refuse.</p>
+        <p role="alert">Le dernier paiement a été refusé.</p>
       )}
       {subscription.cancelAtPeriodEnd && subscription.status !== 'canceled' && (
-        <p>Resiliation programmee : votre acces prend fin le {formatDate(subscription.currentPeriodEnd)}.</p>
+        <p>Résiliation programmée : votre accès prend fin le {formatDate(subscription.currentPeriodEnd)}.</p>
       )}
       {!subscription.cancelAtPeriodEnd && ['active', 'past_due'].includes(subscription.status) && (
-        <p>Prochaine echeance : {formatDate(subscription.currentPeriodEnd)}.</p>
+        <p>Prochaine échéance : {formatDate(subscription.currentPeriodEnd)}.</p>
       )}
-      {subscription.status === 'canceled' && <p>Resilie le {formatDate(subscription.canceledAt)}.</p>}
+      {subscription.status === 'canceled' && <p>Résilié le {formatDate(subscription.canceledAt)}.</p>}
       {canCancel && (
         <button type="button" className="button button-danger" disabled={isBusy} onClick={onCancel}>
-          Resilier mon abonnement
+          Résilier mon abonnement
         </button>
       )}
     </div>
@@ -69,7 +69,7 @@ export default function AccountPage() {
   }
 
   async function handleCancel() {
-    if (!window.confirm('Resilier votre abonnement a la fin de la periode payee ?')) {
+    if (!window.confirm('Résilier votre abonnement à la fin de la période payée ?')) {
       return;
     }
     setIsBusy(true);
@@ -102,7 +102,7 @@ export default function AccountPage() {
       {data && (
         <section>
           <h2>Historique des paiements</h2>
-          <PaymentTable payments={data.payments} caption="Mes paiements, du plus recent au plus ancien" />
+          <PaymentTable payments={data.payments} caption="Mes paiements, du plus récent au plus ancien" />
         </section>
       )}
     </>

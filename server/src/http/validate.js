@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { HttpError } from './errors.js';
 
-/** Valide une valeur avec un schema zod ; en cas d'echec, repond 400 avec le detail par champ. */
+/** Valide une valeur avec un schéma zod ; en cas d'échec, répond 400 avec le détail par champ. */
 export function parse(schema, value) {
   const result = schema.safeParse(value);
   if (result.success) {
@@ -11,7 +11,7 @@ export function parse(schema, value) {
     field: issue.path.join('.'),
     message: issue.message,
   }));
-  throw new HttpError(400, 'donnees_invalides', 'Les donnees envoyees sont invalides.', details);
+  throw new HttpError(400, 'donnees_invalides', 'Les données envoyées sont invalides.', details);
 }
 
 export const uuidSchema = z.uuid();

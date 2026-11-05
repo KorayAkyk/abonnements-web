@@ -15,7 +15,7 @@ const STRIPE_ENV = {
 };
 
 /** Parcours complet en mode Stripe, avec un faux client : aucune connexion n'est ouverte. */
-describe('mode Stripe, sans appel a Stripe', () => {
+describe('mode Stripe, sans appel à Stripe', () => {
   let ctx;
   const stripeClient = {
     checkout: { sessions: { create: vi.fn(), retrieve: vi.fn(), expire: vi.fn() } },
@@ -53,7 +53,7 @@ describe('mode Stripe, sans appel a Stripe', () => {
     return id;
   }
 
-  it('renvoie l adresse de paiement de Stripe et attend l evenement pour activer', async () => {
+  it("renvoie l'adresse de paiement de Stripe et attend l'événement pour activer", async () => {
     const { agent } = await registerMember(ctx.app);
     const checkout = await agent.post('/api/subscriptions/checkout').send({ planCode: 'integral' }).expect(201);
 
@@ -74,14 +74,14 @@ describe('mode Stripe, sans appel a Stripe', () => {
     expect(after.body.subscription.status).toBe('active');
   });
 
-  it('expire la session Stripe precedente quand le membre recommence', async () => {
+  it('expire la session Stripe précédente quand le membre recommence', async () => {
     const { agent } = await registerMember(ctx.app);
     await agent.post('/api/subscriptions/checkout').send({ planCode: 'confort' }).expect(201);
     await agent.post('/api/subscriptions/checkout').send({ planCode: 'confort' }).expect(201);
     expect(stripeClient.checkout.sessions.expire).toHaveBeenCalledTimes(1);
   });
 
-  it('transmet la resiliation a Stripe', async () => {
+  it('transmet la résiliation à Stripe', async () => {
     const { agent } = await registerMember(ctx.app);
     const id = await activeSubscription(agent);
 
@@ -91,7 +91,7 @@ describe('mode Stripe, sans appel a Stripe', () => {
     expect(stripeClient.subscriptions.update).toHaveBeenCalledWith(`sub_${id}`, { cancel_at_period_end: true });
   });
 
-  it('si Stripe echoue a la resiliation, repond 502 et ne change rien', async () => {
+  it('si Stripe échoue à la résiliation, répond 502 et ne change rien', async () => {
     const { agent } = await registerMember(ctx.app);
     await activeSubscription(agent);
     stripeClient.subscriptions.update.mockRejectedValue(new Error('panne'));
@@ -104,7 +104,7 @@ describe('mode Stripe, sans appel a Stripe', () => {
     expect(current.body.subscription.cancelAtPeriodEnd).toBe(false);
   });
 
-  it('si Stripe echoue a la souscription, repond 502 et le membre peut reessayer', async () => {
+  it('si Stripe échoue à la souscription, répond 502 et le membre peut réessayer', async () => {
     const { agent } = await registerMember(ctx.app);
     stripeClient.checkout.sessions.create.mockRejectedValueOnce(new Error('panne'));
 
@@ -113,7 +113,7 @@ describe('mode Stripe, sans appel a Stripe', () => {
     await agent.post('/api/subscriptions/checkout').send({ planCode: 'confort' }).expect(201);
   });
 
-  it('demande de patienter si l abonnement Stripe n est pas encore relie', async () => {
+  it("demande de patienter si l'abonnement Stripe n'est pas encore relié", async () => {
     const { agent } = await registerMember(ctx.app);
     const checkout = await agent.post('/api/subscriptions/checkout').send({ planCode: 'confort' }).expect(201);
     await postEvent(
@@ -126,13 +126,13 @@ describe('mode Stripe, sans appel a Stripe', () => {
     expect(response.body.error.code).toBe('abonnement_en_cours_de_liaison');
   });
 
-  it('n expose pas les routes du simulateur', async () => {
+  it("n'expose pas les routes du simulateur", async () => {
     const { agent } = await registerMember(ctx.app);
     const response = await agent.post('/api/simulator/checkouts/sim_cs_x/pay').send({ outcome: 'success' }).expect(404);
     expect(response.body.error.code).toBe('route_introuvable');
   });
 
-  it('verifie les evenements avec le secret du webhook Stripe', async () => {
+  it('vérifie les événements avec le secret du webhook Stripe', async () => {
     const event = stripeEvent('evt_mauvais_secret', 'customer.created', {});
     await postEvent(ctx.app, event, 'whsec_secret_du_simulateur').expect(400);
     await request(ctx.app).get('/api/health').expect(200);

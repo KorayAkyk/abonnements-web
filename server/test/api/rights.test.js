@@ -24,7 +24,7 @@ const ADMIN_ROUTES = [
   ['post', `/api/simulator/subscriptions/${ANY_ID}/end-period`],
 ];
 
-describe('controle des droits', () => {
+describe('contrôle des droits', () => {
   let ctx;
 
   beforeAll(async () => {
@@ -32,12 +32,12 @@ describe('controle des droits', () => {
   });
   afterAll(() => ctx.close());
 
-  it.each([...MEMBER_ROUTES, ...ADMIN_ROUTES])('visiteur anonyme : %s %s repond 401', async (method, url) => {
+  it.each([...MEMBER_ROUTES, ...ADMIN_ROUTES])('visiteur anonyme : %s %s répond 401', async (method, url) => {
     const response = await request(ctx.app)[method](url).send({}).expect(401);
     expect(response.body.error.code).toBe('non_connecte');
   });
 
-  it.each(ADMIN_ROUTES)('simple membre : %s %s repond 403', async (method, url) => {
+  it.each(ADMIN_ROUTES)('simple membre : %s %s répond 403', async (method, url) => {
     const { agent } = await registerMember(ctx.app);
     const response = await agent[method](url).send({}).expect(403);
     expect(response.body.error.code).toBe('acces_refuse');
@@ -48,7 +48,7 @@ describe('controle des droits', () => {
     expect(response.body.plans.map((plan) => plan.code)).toEqual(['essentiel', 'confort', 'integral']);
   });
 
-  it('un membre ne voit ni l abonnement ni les paiements d un autre', async () => {
+  it("un membre ne voit ni l'abonnement ni les paiements d'un autre", async () => {
     const alice = await registerMember(ctx.app);
     const bob = await registerMember(ctx.app);
     await subscribeAndPay(alice.agent);
@@ -59,7 +59,7 @@ describe('controle des droits', () => {
     expect(payments.body).toEqual({ payments: [], total: 0 });
   });
 
-  it('un membre ne peut ni lire ni payer la session de paiement d un autre', async () => {
+  it("un membre ne peut ni lire ni payer la session de paiement d'un autre", async () => {
     const alice = await registerMember(ctx.app);
     const bob = await registerMember(ctx.app);
     const checkout = await alice.agent.post('/api/subscriptions/checkout').send({ planCode: 'confort' }).expect(201);
@@ -72,7 +72,7 @@ describe('controle des droits', () => {
     expect(current.body.subscription.status).toBe('pending');
   });
 
-  it('un membre ne peut resilier que son propre abonnement', async () => {
+  it('un membre ne peut résilier que son propre abonnement', async () => {
     const alice = await registerMember(ctx.app);
     const bob = await registerMember(ctx.app);
     const { subscriptionId } = await subscribeAndPay(alice.agent);
@@ -84,7 +84,7 @@ describe('controle des droits', () => {
     expect(current.body.subscription.cancelAtPeriodEnd).toBe(false);
   });
 
-  it('le role vient de la base, pas de la session : un retrait de droits s applique aussitot', async () => {
+  it("le rôle vient de la base, pas de la session : un retrait de droits s'applique aussitôt", async () => {
     const admin = await createAdmin(ctx);
     await admin.agent.get('/api/admin/stats').expect(200);
     await ctx.pool.query(`UPDATE users SET role = 'member' WHERE id = $1`, [admin.user.id]);

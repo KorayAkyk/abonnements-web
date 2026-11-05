@@ -12,8 +12,8 @@ export const STATUS_LABELS = {
   pending: 'Paiement en attente',
   active: 'Actif',
   past_due: 'Paiement en retard',
-  canceled: 'Resilie',
-  expired: 'Expire',
+  canceled: 'Résilié',
+  expired: 'Expiré',
 };
 
-export const PAYMENT_LABELS = { paid: 'Paye', failed: 'Refuse' };
+export const PAYMENT_LABELS = { paid: 'Payé', failed: 'Refusé' };

@@ -7,7 +7,7 @@ CREATE TABLE users (
   created_at    timestamptz NOT NULL DEFAULT now()
 );
 
--- Seule l'empreinte du jeton est stockee : une fuite de cette table ne donne acces a aucune session.
+-- Seule l'empreinte du jeton est stockée : une fuite de cette table ne donne accès à aucune session.
 CREATE TABLE sessions (
   token_hash text PRIMARY KEY,
   user_id    uuid NOT NULL REFERENCES users (id) ON DELETE CASCADE,

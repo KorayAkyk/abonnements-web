@@ -3,7 +3,7 @@ import { isCancelable, nextStatus, TRIGGERS } from '../../src/subscriptions/stat
 
 const { PAYMENT_SUCCEEDED, PAYMENT_FAILED, PROVIDER_CANCELED, CHECKOUT_EXPIRED } = TRIGGERS;
 
-describe('cycle de vie de l abonnement', () => {
+describe("cycle de vie de l'abonnement", () => {
   it.each([
     ['pending', PAYMENT_SUCCEEDED, 'active'],
     ['pending', PAYMENT_FAILED, 'pending'],
@@ -19,17 +19,17 @@ describe('cycle de vie de l abonnement', () => {
     expect(nextStatus(current, trigger)).toBe(expected);
   });
 
-  it.each([['canceled'], ['expired']])('%s est definitif, quel que soit l evenement', (status) => {
+  it.each([['canceled'], ['expired']])("%s est définitif, quel que soit l'événement", (status) => {
     for (const trigger of Object.values(TRIGGERS)) {
       expect(nextStatus(status, trigger)).toBe(status);
     }
   });
 
-  it('refuse un etat inconnu', () => {
+  it('refuse un état inconnu', () => {
     expect(() => nextStatus('inconnu', PAYMENT_SUCCEEDED)).toThrow(/inconnu/);
   });
 
-  it('seuls les abonnements en cours sont resiliables', () => {
+  it('seuls les abonnements en cours sont résiliables', () => {
     expect(['pending', 'active', 'past_due', 'canceled', 'expired'].filter(isCancelable)).toEqual([
       'active',
       'past_due',

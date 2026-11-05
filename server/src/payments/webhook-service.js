@@ -3,23 +3,23 @@ import { withTransaction } from '../db/pool.js';
 import { HttpError } from '../http/errors.js';
 import { applyEvent } from './event-handlers.js';
 
-/** Verifie la signature (schema Stripe : horodatage et HMAC-SHA256) sans aucun appel reseau. */
+/** Vérifie la signature (schéma Stripe : horodatage et HMAC-SHA256) sans aucun appel réseau. */
 export function verifySignedEvent(rawBody, signature, secret) {
   try {
     return Stripe.webhooks.constructEvent(rawBody, signature ?? '', secret);
   } catch {
-    throw new HttpError(400, 'signature_invalide', 'La signature de cet evenement est invalide.');
+    throw new HttpError(400, 'signature_invalide', 'La signature de cet événement est invalide.');
   }
 }
 
 export function createWebhookService({ pool, webhookSecret }) {
   return {
     /**
-     * Traite un evenement une seule fois. L'enregistrement de son identifiant et ses effets sont
-     * dans la meme transaction :
-     * - evenement rejoue : la cle primaire existe deja, rien n'est refait ;
-     * - deux livraisons simultanees : la seconde attend la premiere, puis voit le doublon ;
-     * - erreur pendant le traitement : tout est annule, Stripe pourra renvoyer l'evenement.
+     * Traite un événement une seule fois. L'enregistrement de son identifiant et ses effets sont
+     * dans la même transaction :
+     * - événement rejoué : la clé primaire existe déjà, rien n'est refait ;
+     * - deux livraisons simultanées : la seconde attend la première, puis voit le doublon ;
+     * - erreur pendant le traitement : tout est annulé, Stripe pourra renvoyer l'événement.
      */
     async receive(rawBody, signature) {
       const event = verifySignedEvent(rawBody, signature, webhookSecret);

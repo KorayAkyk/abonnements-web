@@ -6,12 +6,12 @@ import { seed } from './seed.js';
 loadEnvFile();
 const config = loadConfig();
 if (config.nodeEnv === 'production') {
-  throw new Error('Les donnees de demonstration sont interdites en production.');
+  throw new Error('Les données de démonstration sont interdites en production.');
 }
 const pool = createPool(config.databaseUrl);
 try {
   const created = await withTransaction(pool, seed);
-  console.log(created ? 'Donnees de demonstration creees.' : 'Donnees de demonstration deja presentes.');
+  console.log(created ? 'Données de démonstration créées.' : 'Données de démonstration déjà présentes.');
 } finally {
   await pool.end();
 }

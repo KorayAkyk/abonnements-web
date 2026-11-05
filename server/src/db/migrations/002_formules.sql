@@ -9,6 +9,6 @@ CREATE TABLE plans (
 );
 
 INSERT INTO plans (code, name, description, price_cents, position) VALUES
-  ('essentiel', 'Essentiel', 'Acces a la salle de musculation, du lundi au vendredi.', 2900, 1),
-  ('confort', 'Confort', 'Acces illimite a la salle et aux cours collectifs.', 4500, 2),
-  ('integral', 'Integral', 'Acces illimite, cours collectifs et un suivi mensuel avec un coach.', 6900, 3);
+  ('essentiel', 'Essentiel', 'Accès à la salle de musculation, du lundi au vendredi.', 2900, 1),
+  ('confort', 'Confort', 'Accès illimité à la salle et aux cours collectifs.', 4500, 2),
+  ('integral', 'Intégral', 'Accès illimité, cours collectifs et un suivi mensuel avec un coach.', 6900, 3);

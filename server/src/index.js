@@ -9,7 +9,7 @@ const pool = createPool(config.databaseUrl);
 const app = createApp({ pool, config });
 
 const server = app.listen(config.port, () => {
-  console.log(`Application prete sur ${config.appBaseUrl} (paiement : ${config.paymentProvider})`);
+  console.log(`Application prête sur ${config.appBaseUrl} (paiement : ${config.paymentProvider})`);
 });
 
 function shutdown() {

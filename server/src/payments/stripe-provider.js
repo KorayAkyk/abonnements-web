@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 
 /**
- * Prestataire reel, en mode test uniquement (voir config.js). Le client est injectable :
+ * Prestataire réel, en mode test uniquement (voir config.js). Le client est injectable :
  * les tests passent un faux client et ce module n'ouvre alors aucune connexion.
  */
 export function createStripeProvider({ secretKey, priceIds, client }) {
@@ -17,7 +17,7 @@ export function createStripeProvider({ secretKey, priceIds, client }) {
           line_items: [{ price: priceIds[planCode], quantity: 1 }],
           customer_email: customerEmail,
           client_reference_id: subscriptionId,
-          // Recopie sur l'abonnement Stripe : ses factures et ses evenements nous retrouvent ainsi.
+          // Recopié sur l'abonnement Stripe : ses factures et ses événements nous retrouvent ainsi.
           subscription_data: { metadata: { subscription_id: subscriptionId } },
           success_url: successUrl,
           cancel_url: cancelUrl,

@@ -13,7 +13,7 @@ const emailSchema = z.string().trim().toLowerCase().max(254).pipe(z.email());
 const registerSchema = z.object({
   email: emailSchema,
   fullName: z.string().trim().min(2).max(100),
-  // scrypt accepte toute longueur, mais un mot de passe geant couterait du calcul pour rien.
+  // scrypt accepte toute longueur, mais un mot de passe géant coûterait du calcul pour rien.
   password: z.string().min(10).max(200),
 });
 
@@ -27,7 +27,7 @@ function limiter(options) {
     standardHeaders: 'draft-8',
     legacyHeaders: false,
     handler: (_req, _res, next) => {
-      next(new HttpError(429, 'trop_de_tentatives', 'Trop de tentatives. Reessayez dans quelques minutes.'));
+      next(new HttpError(429, 'trop_de_tentatives', 'Trop de tentatives. Réessayez dans quelques minutes.'));
     },
     ...options,
   });
@@ -40,8 +40,8 @@ function publicUser(row) {
 export function authRoutes({ pool, sessions, config }) {
   const router = Router();
 
-  // Par adresse IP et par compte vise : un attaquant ne peut pas bloquer tous les comptes,
-  // et il ne peut pas multiplier les essais sur un compte. Seuls les echecs comptent.
+  // Par adresse IP et par compte visé : un attaquant ne peut pas bloquer tous les comptes,
+  // et il ne peut pas multiplier les essais sur un compte. Seuls les échecs comptent.
   const loginLimiter = limiter({
     windowMs: 15 * 60 * 1000,
     limit: config.rateLimit.loginMax,
@@ -68,7 +68,7 @@ export function authRoutes({ pool, sessions, config }) {
       user = rows[0];
     } catch (error) {
       if (error.code === UNIQUE_VIOLATION) {
-        throw new HttpError(409, 'email_deja_utilise', 'Un compte existe deja avec cette adresse.');
+        throw new HttpError(409, 'email_deja_utilise', 'Un compte existe déjà avec cette adresse.');
       }
       throw error;
     }

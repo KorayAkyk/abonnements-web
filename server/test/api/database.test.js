@@ -5,7 +5,7 @@ import { withTransaction } from '../../src/db/pool.js';
 import { DEMO_ADMIN_EMAIL, DEMO_MEMBER_EMAIL, DEMO_PASSWORD, seed } from '../../src/db/seed.js';
 import { createTestContext, registerMember } from '../helpers.js';
 
-describe('base de donnees', () => {
+describe('base de données', () => {
   let ctx;
 
   beforeAll(async () => {
@@ -18,10 +18,10 @@ describe('base de donnees', () => {
       expect(await migrate(ctx.pool)).toEqual([]);
     });
 
-    it('refuse de continuer si une migration appliquee a ete modifiee', async () => {
+    it('refuse de continuer si une migration appliquée a été modifiée', async () => {
       const version = '001_comptes.sql';
       const { rows } = await ctx.pool.query('SELECT checksum FROM schema_migrations WHERE version = $1', [version]);
-      await ctx.pool.query(`UPDATE schema_migrations SET checksum = 'modifiee' WHERE version = $1`, [version]);
+      await ctx.pool.query(`UPDATE schema_migrations SET checksum = 'modifiée' WHERE version = $1`, [version]);
 
       await expect(migrate(ctx.pool)).rejects.toThrow(/001_comptes\.sql/);
 
@@ -29,8 +29,8 @@ describe('base de donnees', () => {
     });
   });
 
-  describe('contraintes metier portees par la base', () => {
-    it('interdit deux abonnements vivants sur un meme compte, meme en SQL direct', async () => {
+  describe('contraintes métier portées par la base', () => {
+    it('interdit deux abonnements vivants sur un même compte, même en SQL direct', async () => {
       const { user } = await registerMember(ctx.app);
       const insert = () =>
         ctx.pool.query(
@@ -42,14 +42,14 @@ describe('base de donnees', () => {
       await expect(insert()).rejects.toMatchObject({ code: '23505' });
     });
 
-    it('refuse une adresse qui n est pas normalisee', async () => {
+    it("refuse une adresse qui n'est pas normalisée", async () => {
       await expect(
         ctx.pool.query(`INSERT INTO users (email, full_name, password_hash) VALUES ('A@B.TEST', 'x', 'x')`),
       ).rejects.toMatchObject({ code: '23514' });
     });
   });
 
-  describe('donnees de demonstration', () => {
+  describe('données de démonstration', () => {
     it('remplit la base une seule fois, puis les comptes fonctionnent', async () => {
       expect(await withTransaction(ctx.pool, seed)).toBe(true);
       expect(await withTransaction(ctx.pool, seed)).toBe(false);
@@ -64,7 +64,7 @@ describe('base de donnees', () => {
       await admin.get('/api/admin/stats').expect(200);
     });
 
-    it('n utilise que des adresses du domaine reserve aux essais', async () => {
+    it("n'utilise que des adresses du domaine réservé aux essais", async () => {
       const { rows } = await ctx.pool.query(`SELECT email FROM users WHERE email NOT LIKE '%.test'`);
       expect(rows).toEqual([]);
     });

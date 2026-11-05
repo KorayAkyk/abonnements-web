@@ -1,4 +1,4 @@
-/** Erreur de l'API, avec son code stable et le detail par champ quand il existe. */
+/** Erreur de l'API, avec son code stable et le détail par champ quand il existe. */
 export class ApiError extends Error {
   constructor(status, { code, message, details } = {}) {
     super(message ?? 'Une erreur est survenue.');

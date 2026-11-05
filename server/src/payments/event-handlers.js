@@ -3,9 +3,9 @@ import { nextStatus, TRIGGERS } from '../subscriptions/state.js';
 import * as shapes from './stripe-shapes.js';
 
 /**
- * Chaque gestionnaire recoit le client de la transaction ouverte par le service de webhook :
- * l'effet et l'enregistrement de l'evenement sont donc valides ensemble, ou pas du tout.
- * Un evenement qui ne vise aucun abonnement connu est ignore : Stripe n'a pas a le renvoyer.
+ * Chaque gestionnaire reçoit le client de la transaction ouverte par le service de webhook :
+ * l'effet et l'enregistrement de l'événement sont donc validés ensemble, ou pas du tout.
+ * Un événement qui ne vise aucun abonnement connu est ignoré : Stripe n'a pas à le renvoyer.
  */
 async function lockSubscription(db, localId) {
   return localId ? repository.findById(db, localId, { forUpdate: true }) : null;
@@ -49,7 +49,7 @@ async function handleInvoicePaid(db, invoice) {
   });
   await repository.updateFields(db, subscription.id, {
     status: nextStatus(subscription.status, TRIGGERS.PAYMENT_SUCCEEDED),
-    // La facture peut arriver avant la fin de session : elle suffit a relier l'abonnement Stripe.
+    // La facture peut arriver avant la fin de session : elle suffit à relier l'abonnement Stripe.
     providerSubscriptionId: data.providerSubscriptionId,
     currentPeriodEnd: data.periodEnd,
   });

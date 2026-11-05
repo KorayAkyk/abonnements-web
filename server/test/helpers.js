@@ -20,7 +20,7 @@ const TEST_ENV = {
   SIMULATOR_WEBHOOK_SECRET: TEST_WEBHOOK_SECRET,
 };
 
-/** Chaque fichier de test travaille dans son propre schema : ils peuvent tourner en parallele. */
+/** Chaque fichier de test travaille dans son propre schéma : ils peuvent tourner en parallèle. */
 export async function createTestContext({ env = {}, stripeClient } = {}) {
   const schema = `test_${randomBytes(8).toString('hex')}`;
   const admin = createPool(DATABASE_URL);
@@ -52,7 +52,7 @@ export function uniqueEmail(prefix = 'membre') {
 
 export const TEST_PASSWORD = 'mot-de-passe-de-test';
 
-/** Cree un membre et renvoie un agent HTTP qui garde son cookie de session. */
+/** Crée un membre et renvoie un agent HTTP qui garde son cookie de session. */
 export async function registerMember(app, email = uniqueEmail()) {
   const agent = request.agent(app);
   const response = await agent
@@ -76,7 +76,7 @@ export async function subscribeAndPay(agent, planCode = 'confort') {
   return { checkoutId, subscriptionId: checkout.body.subscriptionId, subscription: paid.body.subscription };
 }
 
-/** Envoie un evenement signe au vrai point d'entree HTTP du webhook. */
+/** Envoie un événement signé au vrai point d'entrée HTTP du webhook. */
 export function postEvent(app, event, secret = TEST_WEBHOOK_SECRET) {
   const { rawBody, signature } = signEvent(event, secret);
   return request(app)

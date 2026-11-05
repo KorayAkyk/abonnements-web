@@ -11,7 +11,7 @@ const STRIPE_ENV = {
 };
 
 describe('configuration', () => {
-  it('demarre sans aucune variable, en mode simule', () => {
+  it('démarre sans aucune variable, en mode simulé', () => {
     const config = loadConfig({});
     expect(config.paymentProvider).toBe('simulator');
     expect(config.stripe).toBeNull();
@@ -23,12 +23,12 @@ describe('configuration', () => {
     expect(loadConfig({ PORT: '', PAYMENT_PROVIDER: '' }).port).toBe(3000);
   });
 
-  it('accepte une cle du mode test de Stripe', () => {
+  it('accepte une clé du mode test de Stripe', () => {
     expect(loadConfig(STRIPE_ENV).stripe.priceIds.confort).toBe('price_b');
   });
 
   it.each([['sk_live_factice'], ['rk_live_factice'], ['nimporte-quoi'], ['']])(
-    'refuse la cle %j : seul le mode test est permis',
+    'refuse la clé %j : seul le mode test est permis',
     (key) => {
       expect(() => loadConfig({ ...STRIPE_ENV, STRIPE_SECRET_KEY: key })).toThrow(/mode test/);
     },
@@ -43,13 +43,13 @@ describe('configuration', () => {
     expect(() => loadConfig({ NODE_ENV: 'production', DATABASE_URL: 'postgres://h/b' })).toThrow(/simulateur/);
   });
 
-  it('exige une base explicite et des cookies securises en production', () => {
+  it('exige une base explicite et des cookies sécurisés en production', () => {
     expect(() => loadConfig({ ...STRIPE_ENV, NODE_ENV: 'production' })).toThrow(/DATABASE_URL/);
     const config = loadConfig({ ...STRIPE_ENV, NODE_ENV: 'production', DATABASE_URL: 'postgres://h/b' });
     expect(config.cookieSecure).toBe(true);
   });
 
-  it('refuse une valeur mal formee', () => {
+  it('refuse une valeur mal formée', () => {
     expect(() => loadConfig({ PORT: 'abc' })).toThrow(/Configuration invalide/);
   });
 });

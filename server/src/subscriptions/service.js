@@ -11,17 +11,17 @@ export function createSubscriptionService({ pool, provider, config, logger }) {
       return await action();
     } catch (error) {
       logger.error(error);
-      throw new HttpError(502, 'prestataire_indisponible', 'Le service de paiement ne repond pas. Reessayez plus tard.');
+      throw new HttpError(502, 'prestataire_indisponible', 'Le service de paiement ne répond pas. Réessayez plus tard.');
     }
   }
 
-  /** Un abonnement cree avec un autre prestataire (donnees de demonstration) reste local. */
+  /** Un abonnement crée avec un autre prestataire (données de démonstration) reste local. */
   function isManagedByProvider(subscription) {
     return subscription.provider === provider.name;
   }
 
   async function replacePendingCheckout(pending) {
-    // Une session de paiement abandonnee ne doit pas rester payable en parallele de la nouvelle.
+    // Une session de paiement abandonnée ne doit pas rester payable en parallèle de la nouvelle.
     if (pending.providerCheckoutId && isManagedByProvider(pending)) {
       await callProvider(() => provider.expireCheckout(pending.providerCheckoutId));
     }
@@ -33,7 +33,7 @@ export function createSubscriptionService({ pool, provider, config, logger }) {
       return await repository.insertPending(pool, { userId, planId, provider: provider.name });
     } catch (error) {
       if (error.code === UNIQUE_VIOLATION) {
-        throw new HttpError(409, 'abonnement_existant', 'Une souscription est deja en cours pour ce compte.');
+        throw new HttpError(409, 'abonnement_existant', 'Une souscription est déjà en cours pour ce compte.');
       }
       throw error;
     }
@@ -41,8 +41,8 @@ export function createSubscriptionService({ pool, provider, config, logger }) {
 
   return {
     /**
-     * Reserve l'abonnement en base, puis demande une page de paiement au prestataire.
-     * L'abonnement ne devient actif qu'a la reception de l'evenement signe, jamais ici.
+     * Réserve l'abonnement en base, puis demande une page de paiement au prestataire.
+     * L'abonnement ne devient actif qu'à la réception de l'événement signé, jamais ici.
      */
     async startCheckout(user, planCode) {
       const plan = await findPlanByCode(pool, planCode);
@@ -51,7 +51,7 @@ export function createSubscriptionService({ pool, provider, config, logger }) {
       }
       const live = await repository.findLive(pool, user.id);
       if (live && live.status !== 'pending') {
-        throw new HttpError(409, 'abonnement_existant', 'Ce compte a deja un abonnement en cours.');
+        throw new HttpError(409, 'abonnement_existant', 'Ce compte a déjà un abonnement en cours.');
       }
       if (live) {
         await replacePendingCheckout(live);
@@ -76,10 +76,10 @@ export function createSubscriptionService({ pool, provider, config, logger }) {
       }
     },
 
-    /** Resiliation a la fin de la periode payee. Refaire la demande ne change rien. */
+    /** Résiliation à la fin de la période payée. Refaire la demande ne change rien. */
     async cancelAtPeriodEnd(subscription) {
       if (!isCancelable(subscription.status)) {
-        throw new HttpError(409, 'abonnement_non_resiliable', 'Cet abonnement ne peut pas etre resilie.');
+        throw new HttpError(409, 'abonnement_non_resiliable', 'Cet abonnement ne peut pas être résilié.');
       }
       if (subscription.cancelAtPeriodEnd) {
         return repository.findById(pool, subscription.id);

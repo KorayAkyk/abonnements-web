@@ -1,9 +1,9 @@
 import net from 'node:net';
 import { describe, expect, it } from 'vitest';
 
-describe('garde reseau des tests', () => {
-  it('bloque toute connexion vers un hote exterieur', () => {
-    expect(() => net.connect(443, 'hote-exterieur.invalid')).toThrow(/interdite/);
-    expect(() => net.connect({ host: 'hote-exterieur.invalid', port: 443 })).toThrow(/interdite/);
+describe('garde réseau des tests', () => {
+  it('bloque toute connexion vers un hôte extérieur', () => {
+    expect(() => net.connect(443, 'hote-extérieur.invalid')).toThrow(/interdite/);
+    expect(() => net.connect({ host: 'hote-extérieur.invalid', port: 443 })).toThrow(/interdite/);
   });
 });

@@ -39,7 +39,7 @@ describe('webhook de paiement', () => {
   }
 
   describe('signature', () => {
-    it('active un abonnement sur un evenement correctement signe', async () => {
+    it('active un abonnement sur un événement correctement signé', async () => {
       const { agent, subscriptionId } = await pendingSubscription();
       await postEvent(ctx.app, stripeEvent('evt_ok', 'invoice.paid', invoiceObject(subscriptionId))).expect(200);
       const current = await agent.get('/api/subscriptions/current').expect(200);
@@ -49,7 +49,7 @@ describe('webhook de paiement', () => {
     it.each([
       ['absente', undefined],
       ['vide', ''],
-      ['mal formee', 'pas-une-signature'],
+      ['mal formée', 'pas-une-signature'],
     ])('refuse une signature %s, sans aucun effet', async (_label, signature) => {
       const { agent, subscriptionId } = await pendingSubscription();
       const eventId = `evt_sans_signature_${subscriptionId}`;
@@ -63,14 +63,14 @@ describe('webhook de paiement', () => {
       expect(current.body.subscription.status).toBe('pending');
     });
 
-    it('refuse un evenement signe avec un autre secret', async () => {
+    it('refuse un événement signé avec un autre secret', async () => {
       const { subscriptionId } = await pendingSubscription();
       const event = stripeEvent('evt_autre_secret', 'invoice.paid', invoiceObject(subscriptionId));
       await postEvent(ctx.app, event, 'whsec_autre_secret').expect(400);
       expect(await countPayments(ctx.pool, subscriptionId)).toBe(0);
     });
 
-    it('refuse un corps modifie apres signature : le montant ne peut pas etre truque', async () => {
+    it('refuse un corps modifié après signature : le montant ne peut pas être truqué', async () => {
       const { subscriptionId } = await pendingSubscription();
       const payload = JSON.stringify(stripeEvent('evt_truque', 'invoice.paid', invoiceObject(subscriptionId)));
       const signature = Stripe.webhooks.generateTestHeaderString({ payload, secret: TEST_WEBHOOK_SECRET });
@@ -80,7 +80,7 @@ describe('webhook de paiement', () => {
       expect(await countPayments(ctx.pool, subscriptionId)).toBe(0);
     });
 
-    it('refuse une signature trop ancienne : une capture ne peut pas etre rejouee plus tard', async () => {
+    it('refuse une signature trop ancienne : une capture ne peut pas être rejouée plus tard', async () => {
       const { subscriptionId } = await pendingSubscription();
       const payload = JSON.stringify(stripeEvent('evt_ancien', 'invoice.paid', invoiceObject(subscriptionId)));
       const signature = Stripe.webhooks.generateTestHeaderString({
@@ -93,7 +93,7 @@ describe('webhook de paiement', () => {
   });
 
   describe('traitement unique', () => {
-    it('un evenement rejoue n est traite qu une fois', async () => {
+    it("un événement rejoué n'est traite qu'une fois", async () => {
       const { subscriptionId } = await pendingSubscription();
       const event = stripeEvent('evt_rejoue', 'invoice.paid', invoiceObject(subscriptionId));
 
@@ -105,7 +105,7 @@ describe('webhook de paiement', () => {
       expect(await countPayments(ctx.pool, subscriptionId)).toBe(1);
     });
 
-    it('des livraisons simultanees du meme evenement ne le traitent qu une fois', async () => {
+    it("des livraisons simultanées du même événement ne le traitent qu'une fois", async () => {
       const { subscriptionId } = await pendingSubscription();
       const event = stripeEvent('evt_simultane', 'invoice.paid', invoiceObject(subscriptionId));
 
@@ -116,7 +116,7 @@ describe('webhook de paiement', () => {
       expect(await countPayments(ctx.pool, subscriptionId)).toBe(1);
     });
 
-    it('la meme facture sous deux evenements differents n est comptee qu une fois', async () => {
+    it("la même facture sous deux événements différents n'est comptée qu'une fois", async () => {
       const { subscriptionId } = await pendingSubscription();
       const invoice = invoiceObject(subscriptionId);
       await postEvent(ctx.app, stripeEvent('evt_facture_a', 'invoice.paid', invoice)).expect(200);
@@ -124,10 +124,10 @@ describe('webhook de paiement', () => {
       expect(await countPayments(ctx.pool, subscriptionId)).toBe(1);
     });
 
-    it('un traitement en echec est annule en entier, et le renvoi aboutit', async () => {
+    it('un traitement en échec est annulé en entier, et le renvoi aboutit', async () => {
       const { agent, subscriptionId } = await pendingSubscription();
       const eventId = 'evt_echec_puis_renvoi';
-      // Montant negatif : refuse par une contrainte de la base, au milieu du traitement.
+      // Montant négatif : refuse par une contrainte de la base, au milieu du traitement.
       const broken = stripeEvent(eventId, 'invoice.paid', invoiceObject(subscriptionId, { amount_paid: -1 }));
 
       await postEvent(ctx.app, broken).expect(500);
@@ -142,13 +142,13 @@ describe('webhook de paiement', () => {
     });
   });
 
-  describe('contenu des evenements', () => {
-    it('garde la trace d un type inconnu sans echouer', async () => {
+  describe('contenu des événements', () => {
+    it("garde la trace d'un type inconnu sans échouer", async () => {
       await postEvent(ctx.app, stripeEvent('evt_inconnu', 'customer.created', { id: 'cus_1' })).expect(200);
       expect(await eventCount('evt_inconnu')).toBe(1);
     });
 
-    it('ignore un evenement qui ne vise aucun abonnement connu', async () => {
+    it('ignore un événement qui ne vise aucun abonnement connu', async () => {
       const unknown = invoiceObject('00000000-0000-4000-8000-000000000000');
       await postEvent(ctx.app, stripeEvent('evt_orphelin', 'invoice.paid', unknown)).expect(200);
       const noMetadata = invoiceObject('x', { parent: null });
@@ -159,7 +159,7 @@ describe('webhook de paiement', () => {
       expect(rows[0].n).toBe(0);
     });
 
-    it('accepte les evenements dans le desordre : facture d abord, fin de session ensuite', async () => {
+    it("accepte les événements dans le désordre : facture d'abord, fin de session ensuite", async () => {
       const { agent, subscriptionId } = await pendingSubscription();
       await postEvent(ctx.app, stripeEvent('evt_ordre_1', 'invoice.paid', invoiceObject(subscriptionId))).expect(200);
       await postEvent(
@@ -177,7 +177,7 @@ describe('webhook de paiement', () => {
       expect(await countPayments(ctx.pool, subscriptionId)).toBe(1);
     });
 
-    it('une mise a jour de l abonnement synchronise la resiliation et la fin de periode', async () => {
+    it("une mise à jour de l'abonnement synchronise la résiliation et la fin de période", async () => {
       const { agent } = await registerMember(ctx.app);
       const { subscriptionId } = await subscribeAndPay(agent);
       const end = Math.floor(Date.now() / 1000) + 1000;

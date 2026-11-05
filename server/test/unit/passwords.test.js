@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { hashPassword, verifyPassword } from '../../src/auth/passwords.js';
 
 describe('mots de passe', () => {
-  it('ne stocke jamais le mot de passe en clair et sale chaque empreinte', async () => {
+  it('ne stockée jamais le mot de passe en clair et sale chaque empreinte', async () => {
     const first = await hashPassword('un-mot-de-passe');
     const second = await hashPassword('un-mot-de-passe');
     expect(first).not.toContain('un-mot-de-passe');

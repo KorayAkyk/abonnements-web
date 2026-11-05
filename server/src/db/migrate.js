@@ -15,16 +15,16 @@ const CREATE_TRACKING_TABLE = `
   )`;
 
 /**
- * Applique dans l'ordre les fichiers SQL pas encore passes, chacun dans sa transaction.
- * Refuse de continuer si une migration deja appliquee a ete modifiee.
- * Renvoie la liste des versions appliquees.
+ * Applique dans l'ordre les fichiers SQL pas encore passés, chacun dans sa transaction.
+ * Refuse de continuer si une migration déjà appliquée a été modifiée.
+ * Renvoie la liste des versions appliquées.
  */
 export async function migrate(pool) {
   const files = (await readdir(MIGRATIONS_DIR)).filter((name) => name.endsWith('.sql')).sort();
   const applied = [];
 
   return withTransaction(pool, async (client) => {
-    // Deux demarrages simultanes ne doivent pas appliquer deux fois la meme migration.
+    // Deux démarrages simultanés ne doivent pas appliquer deux fois la même migration.
     await client.query('SELECT pg_advisory_xact_lock($1)', [MIGRATION_LOCK_ID]);
     await client.query(CREATE_TRACKING_TABLE);
     const { rows } = await client.query('SELECT version, checksum FROM schema_migrations');
@@ -35,7 +35,7 @@ export async function migrate(pool) {
       const checksum = createHash('sha256').update(sql).digest('hex');
       if (known.has(file)) {
         if (known.get(file) !== checksum) {
-          throw new Error(`La migration ${file} a change apres avoir ete appliquee.`);
+          throw new Error(`La migration ${file} a changé après avoir été appliquée.`);
         }
         continue;
       }

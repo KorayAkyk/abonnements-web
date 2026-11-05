@@ -18,7 +18,7 @@ function fakeClient() {
 }
 
 describe('prestataire Stripe, avec un faux client', () => {
-  it('cree une session d abonnement reliee a notre identifiant, sans doublon possible', async () => {
+  it("crée une session d'abonnement reliée à notre identifiant, sans doublon possible", async () => {
     const client = fakeClient();
     const provider = createStripeProvider({ priceIds: PRICE_IDS, client });
 
@@ -39,13 +39,13 @@ describe('prestataire Stripe, avec un faux client', () => {
     expect(options.idempotencyKey).toBe(`checkout-${SUBSCRIPTION_ID}`);
   });
 
-  it('resilie a la fin de la periode, pas immediatement', async () => {
+  it('résilie à la fin de la période, pas immédiatement', async () => {
     const client = fakeClient();
     await createStripeProvider({ priceIds: PRICE_IDS, client }).cancelAtPeriodEnd('sub_1');
     expect(client.subscriptions.update).toHaveBeenCalledWith('sub_1', { cancel_at_period_end: true });
   });
 
-  it('n expire une session que si elle est encore ouverte', async () => {
+  it("n'expire une session que si elle est encore ouverte", async () => {
     const client = fakeClient();
     const provider = createStripeProvider({ priceIds: PRICE_IDS, client });
     await provider.expireCheckout('cs_1');

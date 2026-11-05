@@ -1,4 +1,4 @@
-/** Forme publique d'un abonnement : les identifiants du prestataire restent cote serveur. */
+/** Forme publique d'un abonnement : les identifiants du prestataire restent côté serveur. */
 export function serializeSubscription(subscription) {
   return {
     id: subscription.id,

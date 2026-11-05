@@ -1,5 +1,5 @@
-// Une seule commande pour tout demarrer : npm run demo
-// N'utilise que Node : ce script tourne avant meme l'installation des dependances.
+// Une seule commande pour tout démarrer : npm run demo
+// N'utilise que Node : ce script tourne avant même l'installation des dépendances.
 import { execSync, spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
@@ -16,9 +16,9 @@ if (!existsSync(path.join(ROOT, 'node_modules'))) {
   run('npm ci');
 }
 
-// DATABASE_URL fournie : on utilise cette base, Docker n'est pas necessaire.
+// DATABASE_URL fournie : on utilise cette base, Docker n'est pas nécessaire.
 if (process.env.DATABASE_URL) {
-  console.log('\nDATABASE_URL est definie : docker compose n\'est pas lance.');
+  console.log('\nDATABASE_URL est définie : docker compose n\'est pas lancé.');
 } else {
   run('docker compose up -d --wait');
 }
@@ -28,7 +28,7 @@ run('npm run db:seed');
 run('npm run build');
 
 console.log(`
-Comptes de demonstration (mot de passe : demonstration-2026)
+Comptes de démonstration (mot de passe : demonstration-2026)
   membre : membre@salle-horizon.test
   admin  : admin@salle-horizon.test
 `);

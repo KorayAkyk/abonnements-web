@@ -29,7 +29,7 @@ export default function RegisterPage() {
 
   return (
     <section className="form-page">
-      <h1>Creer un compte</h1>
+      <h1>Créer un compte</h1>
       <ErrorMessage error={error} />
       <form onSubmit={handleSubmit}>
         <label>
@@ -41,15 +41,15 @@ export default function RegisterPage() {
           <input name="email" type="email" autoComplete="username" required />
         </label>
         <label>
-          Mot de passe (10 caracteres minimum)
+          Mot de passe (10 caractères minimum)
           <input name="password" type="password" autoComplete="new-password" required minLength={10} maxLength={200} />
         </label>
         <button type="submit" className="button" disabled={isSubmitting}>
-          Creer mon compte
+          Créer mon compte
         </button>
       </form>
       <p>
-        Deja un compte ? <Link to="/connexion">Se connecter</Link>
+        Déjà un compte ? <Link to="/connexion">Se connecter</Link>
       </p>
     </section>
   );

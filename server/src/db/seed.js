@@ -1,7 +1,7 @@
 import { hashPassword } from '../auth/passwords.js';
 import { findPlanByCode } from '../plans/repository.js';
 
-/** Donnees inventees pour la demonstration. Le domaine .test est reserve : il n'existe pas. */
+/** Données inventées pour la démonstration. Le domaine .test est réservé : il n'existe pas. */
 export const DEMO_PASSWORD = 'demonstration-2026';
 export const DEMO_ADMIN_EMAIL = 'admin@salle-horizon.test';
 export const DEMO_MEMBER_EMAIL = 'membre@salle-horizon.test';
@@ -9,11 +9,11 @@ export const DEMO_MEMBER_EMAIL = 'membre@salle-horizon.test';
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const MEMBERS = [
-  { email: DEMO_MEMBER_EMAIL, name: 'Membre Demonstration', plan: 'confort', status: 'active', months: 3 },
-  { email: 'lea.exemple@salle-horizon.test', name: 'Lea Exemple', plan: 'essentiel', status: 'active', months: 5 },
-  { email: 'noe.fictif@salle-horizon.test', name: 'Noe Fictif', plan: 'integral', status: 'past_due', months: 2 },
-  { email: 'ines.essai@salle-horizon.test', name: 'Ines Essai', plan: 'confort', status: 'canceled', months: 4 },
-  { email: 'tom.modele@salle-horizon.test', name: 'Tom Modele', plan: 'essentiel', status: 'active', months: 1 },
+  { email: DEMO_MEMBER_EMAIL, name: 'Membre Démonstration', plan: 'confort', status: 'active', months: 3 },
+  { email: 'lea.exemple@salle-horizon.test', name: 'Léa Exemple', plan: 'essentiel', status: 'active', months: 5 },
+  { email: 'noe.fictif@salle-horizon.test', name: 'Noé Fictif', plan: 'integral', status: 'past_due', months: 2 },
+  { email: 'ines.essai@salle-horizon.test', name: 'Inès Essai', plan: 'confort', status: 'canceled', months: 4 },
+  { email: 'tom.modele@salle-horizon.test', name: 'Tom Modèle', plan: 'essentiel', status: 'active', months: 1 },
 ];
 
 async function insertUser(db, { email, name, role, passwordHash }) {
@@ -63,7 +63,7 @@ async function insertHistory(db, member, userId) {
   }
 }
 
-/** Remplit une base vide. Ne fait rien si le compte d'administration existe deja. */
+/** Remplit une base vide. Ne fait rien si le compte d'administration existe déjà. */
 export async function seed(db) {
   const { rowCount } = await db.query('SELECT 1 FROM users WHERE email = $1', [DEMO_ADMIN_EMAIL]);
   if (rowCount > 0) {

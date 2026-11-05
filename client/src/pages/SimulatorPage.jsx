@@ -5,7 +5,7 @@ import ErrorMessage from '../components/ErrorMessage.jsx';
 import { formatPrice } from '../format.js';
 import { useAsync } from '../useAsync.js';
 
-/** Tient le role de la page de paiement de Stripe quand aucune cle n'est configuree. */
+/** Tient le rôle de la page de paiement de Stripe quand aucune clé n'est configurée. */
 export default function SimulatorPage() {
   const { checkoutId } = useParams();
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function SimulatorPage() {
       } else if (outcome === 'abandon') {
         navigate('/paiement/retour?statut=annule');
       } else {
-        setNotice('Paiement refuse par la banque simulee. Vous pouvez reessayer.');
+        setNotice('Paiement refusé par la banque simulée. Vous pouvez réessayer.');
         setIsBusy(false);
       }
     } catch (error) {
@@ -36,7 +36,7 @@ export default function SimulatorPage() {
 
   return (
     <section className="form-page">
-      <h1>Paiement simule</h1>
+      <h1>Paiement simulé</h1>
       <p className="alert alert-info">Ce simulateur remplace la page de paiement. Aucun argent n'est en jeu.</p>
       <ErrorMessage error={loadError ?? actionError} />
       {notice && (

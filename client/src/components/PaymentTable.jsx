@@ -16,7 +16,7 @@ export default function PaymentTable({ payments, caption, showEmail = false }) {
             <th scope="col" className="numeric">
               Montant
             </th>
-            <th scope="col">Etat</th>
+            <th scope="col">État</th>
           </tr>
         </thead>
         <tbody>

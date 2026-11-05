@@ -8,7 +8,7 @@ import { useAsync } from '../useAsync.js';
 const SIMULATION_ACTIONS = [
   { action: 'renew', label: 'Renouveler' },
   { action: 'payment-failure', label: 'Refuser un paiement' },
-  { action: 'end-period', label: 'Terminer la periode' },
+  { action: 'end-period', label: 'Terminer la période' },
 ];
 
 function Stat({ label, value }) {
@@ -32,13 +32,13 @@ function SubscriptionRow({ subscription, isSimulator, isBusy, onCancel, onSimula
       <td>{subscription.planName}</td>
       <td>
         <span className={`tag tag-${subscription.status}`}>{STATUS_LABELS[subscription.status]}</span>
-        {subscription.cancelAtPeriodEnd && isLive && <small> resiliation programmee</small>}
+        {subscription.cancelAtPeriodEnd && isLive && <small> résiliation programmée</small>}
       </td>
       <td>{formatDate(subscription.currentPeriodEnd)}</td>
       <td className="actions">
         {isLive && !subscription.cancelAtPeriodEnd && (
           <button type="button" className="link-button" disabled={isBusy} onClick={() => onCancel(subscription.id)}>
-            Resilier
+            Résilier
           </button>
         )}
         {isLive &&
@@ -99,9 +99,9 @@ export default function AdminPage() {
           <Stat label="Membres" value={data.stats.memberCount} />
           <Stat label="Abonnements actifs" value={data.stats.activeCount} />
           <Stat label="En retard de paiement" value={data.stats.pastDueCount} />
-          <Stat label="Resilies" value={data.stats.canceledCount} />
-          <Stat label="Revenu mensuel prevu" value={formatPrice(data.stats.monthlyRevenueCents)} />
-          <Stat label="Total encaisse" value={formatPrice(data.stats.totalPaidCents)} />
+          <Stat label="Résiliés" value={data.stats.canceledCount} />
+          <Stat label="Revenu mensuel prévu" value={formatPrice(data.stats.monthlyRevenueCents)} />
+          <Stat label="Total encaissé" value={formatPrice(data.stats.totalPaidCents)} />
         </dl>
       )}
       <section>
@@ -120,13 +120,13 @@ export default function AdminPage() {
         {data && (
           <div className="table-wrap">
             <table>
-              <caption>Abonnements, du plus recent au plus ancien</caption>
+              <caption>Abonnements, du plus récent au plus ancien</caption>
               <thead>
                 <tr>
                   <th scope="col">Membre</th>
                   <th scope="col">Formule</th>
-                  <th scope="col">Etat</th>
-                  <th scope="col">Fin de periode</th>
+                  <th scope="col">État</th>
+                  <th scope="col">Fin de période</th>
                   <th scope="col">Actions</th>
                 </tr>
               </thead>

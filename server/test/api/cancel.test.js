@@ -10,7 +10,7 @@ import {
   subscribeAndPay,
 } from '../helpers.js';
 
-describe('resiliation', () => {
+describe('résiliation', () => {
   let ctx;
   let admin;
 
@@ -24,7 +24,7 @@ describe('resiliation', () => {
     return admin.agent.post(`/api/simulator/subscriptions/${subscriptionId}/end-period`).expect(200);
   }
 
-  it('programme la fin : l abonnement reste actif jusqu a la fin de la periode payee', async () => {
+  it("programme la fin : l'abonnement reste actif jusqu'à la fin de la période payée", async () => {
     const { agent } = await registerMember(ctx.app);
     await subscribeAndPay(agent);
 
@@ -33,7 +33,7 @@ describe('resiliation', () => {
     expect(response.body.subscription).toMatchObject({ status: 'active', cancelAtPeriodEnd: true });
   });
 
-  it('demander deux fois la resiliation ne change rien de plus', async () => {
+  it('demander deux fois la résiliation ne change rien de plus', async () => {
     const { agent } = await registerMember(ctx.app);
     await subscribeAndPay(agent);
     await agent.post('/api/subscriptions/current/cancel').expect(200);
@@ -41,7 +41,7 @@ describe('resiliation', () => {
     expect(second.body.subscription.cancelAtPeriodEnd).toBe(true);
   });
 
-  it('passe en resilie a la fin de la periode', async () => {
+  it('passe en résilié à la fin de la période', async () => {
     const { agent } = await registerMember(ctx.app);
     const { subscriptionId } = await subscribeAndPay(agent);
     await agent.post('/api/subscriptions/current/cancel').expect(200);
@@ -53,20 +53,20 @@ describe('resiliation', () => {
     expect(current.body.subscription.canceledAt).not.toBeNull();
   });
 
-  it('sans abonnement, il n y a rien a resilier', async () => {
+  it("sans abonnement, il n'y a rien à résilier", async () => {
     const { agent } = await registerMember(ctx.app);
     const response = await agent.post('/api/subscriptions/current/cancel').expect(404);
     expect(response.body.error.code).toBe('abonnement_introuvable');
   });
 
-  it('un abonnement en attente de paiement n est pas resiliable', async () => {
+  it("un abonnement en attente de paiement n'est pas résiliable", async () => {
     const { agent } = await registerMember(ctx.app);
     await agent.post('/api/subscriptions/checkout').send({ planCode: 'confort' }).expect(201);
     const response = await agent.post('/api/subscriptions/current/cancel').expect(409);
     expect(response.body.error.code).toBe('abonnement_non_resiliable');
   });
 
-  it('un abonnement deja resilie n est plus resiliable, meme par l administration', async () => {
+  it("un abonnement déjà résilié n'est plus résiliable, même par l'administration", async () => {
     const { agent } = await registerMember(ctx.app);
     const { subscriptionId } = await subscribeAndPay(agent);
     await endPeriod(subscriptionId);
@@ -75,7 +75,7 @@ describe('resiliation', () => {
     await admin.agent.post(`/api/admin/subscriptions/${subscriptionId}/cancel`).expect(409);
   });
 
-  it('un compte resilie peut se reabonner, et l ancien historique reste', async () => {
+  it("un compte résilié peut se réabonner, et l'ancien historique reste", async () => {
     const { agent } = await registerMember(ctx.app);
     const { subscriptionId } = await subscribeAndPay(agent, 'essentiel');
     await endPeriod(subscriptionId);
@@ -88,7 +88,7 @@ describe('resiliation', () => {
     expect(payments.body.total).toBe(2);
   });
 
-  it('une facture arrivee en retard ne ranime pas un abonnement resilie, mais reste comptee', async () => {
+  it('une facture arrivée en retard ne ranime pas un abonnement résilié, mais reste comptée', async () => {
     const { agent } = await registerMember(ctx.app);
     const { subscriptionId } = await subscribeAndPay(agent);
     await endPeriod(subscriptionId);
@@ -100,7 +100,7 @@ describe('resiliation', () => {
     expect(await countPayments(ctx.pool, subscriptionId)).toBe(2);
   });
 
-  it('un echec de renouvellement met en retard, un paiement regularise', async () => {
+  it('un échec de renouvellement met en retard, un paiement régularise', async () => {
     const { agent } = await registerMember(ctx.app);
     const { subscriptionId } = await subscribeAndPay(agent);
 
@@ -111,7 +111,7 @@ describe('resiliation', () => {
     expect(renewed.body.subscription.status).toBe('active');
   });
 
-  it('un abonnement en retard de paiement reste resiliable', async () => {
+  it('un abonnement en retard de paiement reste résiliable', async () => {
     const { agent } = await registerMember(ctx.app);
     const { subscriptionId } = await subscribeAndPay(agent);
     await admin.agent.post(`/api/simulator/subscriptions/${subscriptionId}/payment-failure`).expect(200);

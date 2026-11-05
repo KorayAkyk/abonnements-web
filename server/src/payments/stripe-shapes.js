@@ -1,8 +1,8 @@
 import { uuidSchema } from '../http/validate.js';
 
 /**
- * Lecture des objets Stripe recus par webhook. Certains champs ont change de place selon la
- * version d'API de l'endpoint (la version est choisie cote Stripe) : les deux formes sont lues.
+ * Lecture des objets Stripe reçus par webhook. Certains champs ont change de place selon la
+ * version d'API de l'endpoint (la version est choisie côté Stripe) : les deux formes sont lues.
  */
 
 function validId(value) {
@@ -17,7 +17,7 @@ function idOf(reference) {
   return typeof reference === 'string' ? reference : reference?.id;
 }
 
-/** Notre identifiant d'abonnement, depose dans les metadonnees a la creation de la session. */
+/** Notre identifiant d'abonnement, déposé dans les métadonnées à la création de la session. */
 export function localIdFromSession(session) {
   return validId(session.client_reference_id ?? session.metadata?.subscription_id);
 }

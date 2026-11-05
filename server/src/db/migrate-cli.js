@@ -7,7 +7,7 @@ loadEnvFile();
 const pool = createPool(loadConfig().databaseUrl);
 try {
   const applied = await migrate(pool);
-  console.log(applied.length ? `Migrations appliquees : ${applied.join(', ')}` : 'Base deja a jour.');
+  console.log(applied.length ? `Migrations appliquées : ${applied.join(', ')}` : 'Base déjà à jour.');
 } finally {
   await pool.end();
 }

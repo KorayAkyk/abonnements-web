@@ -26,9 +26,9 @@ const envSchema = z.object({
 
 function loadStripeConfig(values) {
   const key = values.STRIPE_SECRET_KEY ?? '';
-  // Garde-fou : ce projet de demonstration ne doit jamais toucher de vrai argent.
+  // Garde-fou : ce projet de démonstration ne doit jamais toucher de vrai argent.
   if (!/^(sk|rk)_test_/.test(key)) {
-    throw new Error('STRIPE_SECRET_KEY doit etre une cle du mode test (sk_test_ ou rk_test_).');
+    throw new Error('STRIPE_SECRET_KEY doit être une clé du mode test (sk_test_ ou rk_test_).');
   }
   const webhookSecret = values.STRIPE_WEBHOOK_SECRET ?? '';
   if (!webhookSecret.startsWith('whsec_')) {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-/** Charge des donnees au montage et expose un rechargement. loader doit etre stable : fonction de module ou useCallback. */
+/** Charge des données au montage et expose un rechargement. loader doit être stable : fonction de module ou useCallback. */
 export function useAsync(loader) {
   const [state, setState] = useState({ data: null, error: null, isLoading: true });
 

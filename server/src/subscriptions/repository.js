@@ -30,7 +30,7 @@ export async function findLive(db, userId) {
   return rows[0] ?? null;
 }
 
-/** L'abonnement a afficher : le vivant s'il existe, sinon le dernier resilie. */
+/** L'abonnement à afficher : le vivant s'il existe, sinon le dernier résilié. */
 export async function findCurrent(db, userId) {
   const { rows } = await db.query(
     `${SUBSCRIPTION_SELECT}
@@ -76,7 +76,7 @@ const UPDATABLE_COLUMNS = {
   canceledAt: 'canceled_at',
 };
 
-/** Met a jour les champs fournis. Les noms de colonnes viennent de la liste ci-dessus, jamais du dehors. */
+/** Met à jour les champs fournis. Les noms de colonnes viennent de la liste ci-dessus, jamais du dehors. */
 export async function updateFields(db, id, fields) {
   const entries = Object.entries(fields).filter(([, value]) => value !== undefined);
   if (entries.length === 0) {
@@ -89,7 +89,7 @@ export async function updateFields(db, id, fields) {
   ]);
 }
 
-/** Enregistre un paiement. Renvoie false si cette issue de facture est deja connue. */
+/** Enregistre un paiement. Renvoie false si cette issue de facture est déjà connue. */
 export async function insertPayment(db, payment) {
   const { rowCount } = await db.query(
     `INSERT INTO payments (subscription_id, amount_cents, currency, status, provider_invoice_id, occurred_at)

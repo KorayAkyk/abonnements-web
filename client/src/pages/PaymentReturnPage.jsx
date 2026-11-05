@@ -6,8 +6,8 @@ const POLL_INTERVAL_MS = 1000;
 const MAX_ATTEMPTS = 15;
 
 /**
- * Le retour de paiement ne prouve rien : seul le webhook signe active l'abonnement.
- * La page attend donc que le serveur confirme, car l'evenement peut arriver un peu apres.
+ * Le retour de paiement ne prouve rien : seul le webhook signé active l'abonnement.
+ * La page attend donc que le serveur confirme, car l'événement peut arriver un peu après.
  */
 export default function PaymentReturnPage() {
   const [params] = useSearchParams();
@@ -50,21 +50,21 @@ export default function PaymentReturnPage() {
       {state === 'waiting' && <p role="status">Confirmation du paiement en cours...</p>}
       {state === 'confirmed' && (
         <p role="status" className="alert alert-success">
-          Paiement confirme, votre abonnement est actif.
+          Paiement confirmé, votre abonnement est actif.
         </p>
       )}
       {state === 'late' && (
         <p role="status" className="alert alert-info">
-          La confirmation prend plus de temps que prevu. Votre espace se mettra a jour des sa reception.
+          La confirmation prend plus de temps que prévu. Votre espace se mettra à jour dès sa réception.
         </p>
       )}
       {state === 'canceled' && (
         <p role="status" className="alert alert-info">
-          Paiement annule. Vous n'avez pas ete debite.
+          Paiement annulé. Vous n'avez pas été débité.
         </p>
       )}
       <Link className="button" to="/espace">
-        Aller a mon espace
+        Aller à mon espace
       </Link>
     </section>
   );

@@ -9,7 +9,7 @@ describe('souscription et historique', () => {
   });
   afterAll(() => ctx.close());
 
-  it('reste en attente tant que le paiement n a pas ete confirme par un evenement', async () => {
+  it("reste en attente tant que le paiement n'a pas été confirme par un événement", async () => {
     const { agent } = await registerMember(ctx.app);
     const checkout = await agent.post('/api/subscriptions/checkout').send({ planCode: 'integral' }).expect(201);
 
@@ -20,7 +20,7 @@ describe('souscription et historique', () => {
     expect(payments.body.total).toBe(0);
   });
 
-  it('active l abonnement apres paiement et l ajoute a l historique', async () => {
+  it("active l'abonnement après paiement et l'ajoute à l'historique", async () => {
     const { agent } = await registerMember(ctx.app);
     const { subscription } = await subscribeAndPay(agent, 'confort');
 
@@ -37,7 +37,7 @@ describe('souscription et historique', () => {
     });
   });
 
-  it('un paiement refuse laisse en attente, garde la trace et permet de reessayer', async () => {
+  it('un paiement refusé laisse en attente, garde la trace et permet de réessayer', async () => {
     const { agent } = await registerMember(ctx.app);
     const checkout = await agent.post('/api/subscriptions/checkout').send({ planCode: 'essentiel' }).expect(201);
     const checkoutId = checkout.body.checkoutUrl.split('/').pop();
@@ -52,7 +52,7 @@ describe('souscription et historique', () => {
     expect(payments.body.payments.map((payment) => payment.status).sort()).toEqual(['failed', 'paid']);
   });
 
-  it('une session abandonnee expire et ne s affiche plus', async () => {
+  it("une session abandonnée expire et ne s'affiche plus", async () => {
     const { agent } = await registerMember(ctx.app);
     const checkout = await agent.post('/api/subscriptions/checkout').send({ planCode: 'essentiel' }).expect(201);
     const checkoutId = checkout.body.checkoutUrl.split('/').pop();
@@ -63,14 +63,14 @@ describe('souscription et historique', () => {
     expect(current.body.subscription).toBeNull();
   });
 
-  it('une session terminee ne peut pas etre payee une seconde fois', async () => {
+  it('une session terminée ne peut pas être payée une seconde fois', async () => {
     const { agent } = await registerMember(ctx.app);
     const { checkoutId } = await subscribeAndPay(agent);
     const response = await agent.post(`/api/simulator/checkouts/${checkoutId}/pay`).send({ outcome: 'success' }).expect(409);
     expect(response.body.error.code).toBe('session_terminee');
   });
 
-  it('refuse une formule inconnue, sans laisser d injection SQL passer', async () => {
+  it("refuse une formule inconnue, sans laisser d'injection SQL passer", async () => {
     const { agent } = await registerMember(ctx.app);
     const response = await agent
       .post('/api/subscriptions/checkout')
@@ -82,21 +82,21 @@ describe('souscription et historique', () => {
     expect(rows[0].n).toBe(3);
   });
 
-  it('refuse un resultat de paiement simule inconnu', async () => {
+  it('refuse un résultat de paiement simulé inconnu', async () => {
     const { agent } = await registerMember(ctx.app);
     const checkout = await agent.post('/api/subscriptions/checkout').send({ planCode: 'confort' }).expect(201);
     const checkoutId = checkout.body.checkoutUrl.split('/').pop();
     await agent.post(`/api/simulator/checkouts/${checkoutId}/pay`).send({ outcome: 'gratuit' }).expect(400);
   });
 
-  it('refuse un deuxieme abonnement sur un compte deja abonne', async () => {
+  it('refuse un deuxième abonnement sur un compte déjà abonné', async () => {
     const { agent } = await registerMember(ctx.app);
     await subscribeAndPay(agent);
     const response = await agent.post('/api/subscriptions/checkout').send({ planCode: 'integral' }).expect(409);
     expect(response.body.error.code).toBe('abonnement_existant');
   });
 
-  it('une nouvelle demande remplace la session en attente, l ancienne n est plus payable', async () => {
+  it("une nouvelle demande remplace la session en attente, l'ancienne n'est plus payable", async () => {
     const { agent } = await registerMember(ctx.app);
     const first = await agent.post('/api/subscriptions/checkout').send({ planCode: 'essentiel' }).expect(201);
     const second = await agent.post('/api/subscriptions/checkout').send({ planCode: 'integral' }).expect(201);
@@ -109,7 +109,7 @@ describe('souscription et historique', () => {
     expect(current.body.subscription.plan.code).toBe('integral');
   });
 
-  it('deux demandes simultanees ne creent jamais deux abonnements vivants', async () => {
+  it('deux demandes simultanées ne créent jamais deux abonnements vivants', async () => {
     const { agent, user } = await registerMember(ctx.app);
     const responses = await Promise.all(
       Array.from({ length: 5 }, () => agent.post('/api/subscriptions/checkout').send({ planCode: 'confort' })),
@@ -125,7 +125,7 @@ describe('souscription et historique', () => {
     expect(rows[0].n).toBe(1);
   });
 
-  it('la pagination de l historique est validee et respectee', async () => {
+  it("la pagination de l'historique est validée et respectée", async () => {
     const { agent } = await registerMember(ctx.app);
     const checkout = await agent.post('/api/subscriptions/checkout').send({ planCode: 'confort' }).expect(201);
     const checkoutId = checkout.body.checkoutUrl.split('/').pop();

@@ -1,8 +1,8 @@
 import { randomBytes } from 'node:crypto';
 
 /**
- * Remplace Stripe sans cle ni reseau : la "page de paiement" est une page de l'application,
- * et les evenements passent par le meme service de webhook que les vrais (voir simulator-routes.js).
+ * Remplace Stripe sans clé ni réseau : la "page de paiement" est une page de l'application,
+ * et les événements passent par le même service de webhook que les vrais (voir simulator-routes.js).
  */
 export function createSimulatorProvider() {
   return {

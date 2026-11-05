@@ -20,7 +20,7 @@ function Protected({ children, adminOnly = false }) {
   if (adminOnly && user.role !== 'admin') {
     return (
       <p role="alert" className="alert alert-error">
-        Cette page est reservee a l'administration.
+        Cette page est réservée à l'administration.
       </p>
     );
   }

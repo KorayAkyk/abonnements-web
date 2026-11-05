@@ -24,12 +24,12 @@ export default function Layout() {
           {user?.role === 'admin' && <NavLink to="/admin">Administration</NavLink>}
           {user ? (
             <button type="button" className="link-button" onClick={handleLogout}>
-              Se deconnecter
+              Se déconnecter
             </button>
           ) : (
             <>
               <NavLink to="/connexion">Se connecter</NavLink>
-              <NavLink to="/inscription">Creer un compte</NavLink>
+              <NavLink to="/inscription">Créer un compte</NavLink>
             </>
           )}
         </nav>
@@ -38,7 +38,7 @@ export default function Layout() {
         <Outlet />
       </main>
       <footer className="site-footer">
-        Projet de demonstration : salle fictive, donnees inventees, aucun vrai paiement.
+        Projet de démonstration : salle fictive, données inventées, aucun vrai paiement.
       </footer>
     </>
   );
