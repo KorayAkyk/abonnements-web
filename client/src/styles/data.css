@@ -1,0 +1,87 @@
+.tag {
+  display: inline-block;
+  padding: 0.05rem 0.5rem;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  background: var(--background);
+  border: 1px solid var(--line);
+}
+
+.tag-active,
+.tag-paid {
+  background: var(--success-bg);
+  border-color: #a9dcc4;
+}
+
+.tag-past_due,
+.tag-failed {
+  background: var(--error-bg);
+  border-color: #efc2c2;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+caption {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  border-top: 1px solid var(--line);
+  vertical-align: top;
+}
+
+td small {
+  color: var(--muted);
+}
+
+.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+}
+
+.stat dt {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.stat dd {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
