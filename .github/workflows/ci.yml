@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  qualite:
+    name: Lint, tests, build, Playwright
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17.11-alpine
+        env:
+          POSTGRES_USER: abonnements
+          POSTGRES_PASSWORD: abonnements
+          POSTGRES_DB: abonnements
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U abonnements -d abonnements"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 30
+    env:
+      DATABASE_URL: postgres://abonnements:abonnements@localhost:5432/abonnements
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Installer les dependances
+        run: npm ci
+      - name: Verifier qu'aucune cle Stripe n'est dans le code
+        run: |
+          if git grep -nE '(sk|rk|pk)_(live|test)_[0-9A-Za-z]{16,}|whsec_[0-9A-Za-z]{16,}'; then
+            exit 1
+          fi
+      - name: ESLint
+        run: npm run lint
+      - name: Tests API et metier
+        run: npm test
+      - name: Build de l'interface
+        run: npm run build
+      - name: Installer le navigateur Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Parcours Playwright en mode simule
+        run: npm run test:e2e
+      - name: Conserver le rapport Playwright en cas d'echec
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: rapport-playwright
+          path: |
+            e2e/playwright-report/
+            e2e/test-results/
+          retention-days: 7
+
+  demarrage:
+    name: Demarrage en une commande
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Lancer npm run demo depuis un depot vierge
+        run: |
+          npm run demo > demo.log 2>&1 &
+          for attempt in $(seq 1 90); do
+            curl -fsS http://localhost:3000/api/health && break
+            sleep 2
+          done
+      - name: Verifier l'application demarree
+        run: |
+          curl -fsS http://localhost:3000/api/health | grep -q '"status":"ok"'
+          curl -fsS http://localhost:3000/api/plans | grep -q '"essentiel"'
+          curl -fsS http://localhost:3000/ | grep -q 'id="root"'
+          curl -fsS -c cookies.txt -H 'Content-Type: application/json' \
+            -d '{"email":"admin@salle-horizon.test","password":"demonstration-2026"}' \
+            http://localhost:3000/api/auth/login | grep -q '"role":"admin"'
+          curl -fsS -b cookies.txt http://localhost:3000/api/admin/stats | grep -q '"memberCount":5'
+      - name: Journal du demarrage
+        if: always()
+        run: cat demo.log
